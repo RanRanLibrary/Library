@@ -9,11 +9,14 @@ class Main{     //submitするときはMainにしとかないとエラー出る�
                 a[0]=a[1]=BigInteger.ONE; //1で初期化
                 a[1]=BigInteger.ZERO;     //0で初期化
                 a[1]=BigInteger.TEN;     //10で初期化
+                a[1]=new BigInteger("1234");//任意の数字で初期化するときは文字列で渡す
                 a[0]=a[0].add(a[1]);      //+
                 a[0]=a[0].subtract(a[1]); //-
                 a[0]=a[0].multiply(a[1]); //掛け算
                 a[0]=a[0].devide(a[1]);   //割り算
                 a[0]=a[0].remainder(a[1]);//%
+                
+                a[1]=a[1].add( BigInteger.valueOf(3) ); //引数はBigInteger型である必要があるためこうする
 
                 
 
