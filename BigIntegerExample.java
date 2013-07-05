@@ -1,0 +1,30 @@
+import java.math.BigInteger;
+import java.util.Scanner;
+
+class P10303{
+        public static void main(String[] args){
+                BigInteger[] BIarray=new BigInteger[1004];
+                int i,j;
+
+                a[0]=a[1]=BigInteger.ONE; //1で初期化
+                a[1]=BigInteger.ZERO;     //0で初期化
+                a[1]=BigInteger.TEN;     //10で初期化
+                a[0]=a[0].add(a[1]);      //+
+                a[0]=a[0].subtract(a[1]); //-
+                a[0]=a[0].multiply(a[1]); //掛け算
+                a[0]=a[0].devide(a[1]);   //割り算
+                a[0]=a[0].remainder(a[1]);//%
+
+                
+
+                Scanner s=new Scanner(System.in);
+                while(s.hasNextInt()){
+                        int n=s.nextInt();  //次の整数、Doubleもあるよ
+                        String str=s.nextLine();  //改行まで読み込む、改行文字は捨てられる
+                        System.out.println("入力値+2は"+(a[n]+2));  //末尾に改行を自動で挿入
+                        System.out.print("こっちは改行挿入されない");
+                }
+
+        }
+
+}
