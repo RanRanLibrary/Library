@@ -1,7 +1,7 @@
 import java.math.BigInteger;
 import java.util.Scanner;
 
-class P10303{
+class Main{     //submitするときはMainにしとかないとエラー出るかもしれない。それ以外はファイル名と統一
         public static void main(String[] args){
                 BigInteger[] BIarray=new BigInteger[1004];
                 int i,j;
