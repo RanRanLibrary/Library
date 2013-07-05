@@ -3,7 +3,7 @@ import java.util.Scanner;
 
 class Main{     //submitするときはMainにしとかないとエラー出るかもしれない。それ以外はファイル名と統一
         public static void main(String[] args){
-                BigInteger[] BIarray=new BigInteger[1004];
+                BigInteger[] a=new BigInteger[1004];
                 int i,j;
 
                 a[0]=a[1]=BigInteger.ONE; //1で初期化
