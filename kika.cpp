@@ -1,5 +1,6 @@
 #include <cstdio>
 
+//三角形は時計回りにセットする。辺上はTRUE(内部に判定)を返す。
 bool checkTRIANGLE(int pos[3][2], int target[2]){
 	int x[3] = { pos[1][0] - pos[0][0],
 			pos[2][0] - pos[1][0],
