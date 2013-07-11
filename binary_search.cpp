@@ -1,5 +1,5 @@
 #include <cstdio>
-#include <algorithm>
+#include <algorithm>	//sortに必要だった
 
 //cは配列の先頭アドレス、nは配列の個数(end-bigin)
 //cは昇順にソートされていること。
@@ -10,7 +10,7 @@ int bsearch( T *c, int n , T k){
 	int l = 0, r = n, p;
 	
 	//下方はみ出し判定
-	if( *c > k ) return -1;
+	if( *c > k ) return -1;	//下方はみだし判定とかいらん気がしてきた。
 	
 	while( r-l > 0 ){
 		p = (l + r) / 2;
@@ -20,6 +20,7 @@ int bsearch( T *c, int n , T k){
 	
 	return r;
 }
+
 
 int main(){
 	int n, k;
