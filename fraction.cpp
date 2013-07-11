@@ -16,39 +16,34 @@ class fraction{
 	public:
 		LL ue, st;	//分子,分母
 
-		fraction(LL u, LL s){ue=u; st=s;};
-		fraction(int u, int s){ue=u; st=s;};
+		fraction(){ ue=1; st=1; };
+		fraction(LL u, LL s){ set(u, s); };
+		fraction(int u, int s){ set((LL)u, (LL)s); };
 		
-		fraction &operator+( const fraction &f ){
-			LL tue = ue * f.st + f.ue * st,
-				tst = st * f.st;
-			LL tmp = gcd(tue, tst);
-			ue = tue/tmp; st = tst/tmp;
-			return *this;
-		};
-		
-		fraction &operator-( const fraction &f ){
-			LL tue = ue * f.st - f.ue * st,
-				tst = st * f.st;
-			LL tmp = gcd(tue, tst);
-			ue = tue/tmp; st = tst/tmp;
-			return *this;
+		void set(LL u, LL s){
+			LL tmp = gcd(u, s);
+			ue = u/tmp;
+			st = s/tmp;
 		};
 
-		fraction &operator*( const fraction &f ){
-			LL tue = ue * f.ue,
-				tst = st * f.st;
-			LL tmp = gcd(tue, tst);
-			ue = tue/tmp; st = tst/tmp;
-			return *this;
+		fraction operator+( const fraction &f ){
+			fraction tmp( ue*f.st + f.ue*st, st * f.st );
+			return tmp;
+		};
+		
+		fraction operator-( const fraction &f ){
+			fraction tmp( ue*f.st - f.ue*st, st * f.st);
+			return tmp;
 		};
 
-		fraction &operator/( const fraction &f ){
-			LL tue = ue * f.st,
-				tst = st * f.ue;
-			LL tmp = gcd(tue, tst);
-			ue = tue/tmp; st = tst/tmp;
-			return *this;
+		fraction operator*( const fraction &f ){
+			fraction tmp( ue * f.ue, st * f.st );
+			return tmp;
+		};
+
+		fraction operator/( const fraction &f ){
+			fraction tmp( ue * f.st, st * f.ue);
+			return tmp;
 		};
 		
 		fraction &operator=( const fraction &f ){
@@ -56,8 +51,6 @@ class fraction{
 			st = f.st;
 			return *this;
 		};
-		
-		void set(LL u, LL s){ ue=u; st=s; };
 		
 		double real(){ return (double)ue / (double)st; };
 };
@@ -73,7 +66,7 @@ int main(){
 	fraction f1(u1, s1), f2(u2, s2), tmp(1,1);
 	
 	tmp = f1 + f2;
-	printf("%d/%d + %d/%d = %lld/%lld  = %f \n", u1,s1,u2,s2, tmp.ue, tmp.st, tmp.real() );
+	printf("%lld/%lld + %lld/%lld = %lld/%lld  = %f \n", f1.ue,f1.st,f2.ue,f2.st, tmp.ue, tmp.st, tmp.real() );
 	
 	tmp = f1 - f2;
 	printf("%d/%d - %d/%d = %lld/%lld  = %f \n", u1,s1,u2,s2, tmp.ue, tmp.st, tmp.real() );
