@@ -1,4 +1,1 @@
-Library
-=======
-
-競技プログラミング用ライブラリ
+This repotory is ICPC2013JP_elimination programs.
