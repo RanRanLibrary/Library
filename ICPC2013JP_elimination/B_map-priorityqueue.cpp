@@ -36,22 +36,28 @@ int main(){
     for(i=10;i>0;i--){
    //   cout<<i<<endl;
       for(it=time[i].begin();it!=time[i].end();it++){
-        if(f)printf(",");
+        //if(f)printf(",");
         temp=it->second;
-        flg=f=0;
+        flg=0;
         while(!temp.empty()){
           if(counts[temp.top()]==i){
+            if(f)printf(",");
+            f=0;
             if(flg)printf("=");
             printf("%d",temp.top());
-            f=flg=1;
+            flg=1;
           }
           temp.pop();
         }
+        f=1;
       }
     }
+    
     flg=0;
     for(i=T;i>0;i--){
       if(counts[i]==0){
+        if(f)putchar(',');
+        f=0;
         if(flg)putchar('=');
         printf("%d",i);
         flg=1;
