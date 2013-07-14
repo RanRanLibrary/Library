@@ -21,7 +21,7 @@ long long gcd1(long long n,long long m,long long &x,long long &y){  //n<mにし�
 }
 
 long long gcd(long long n,long long m,long long &x,long long &y){
-	if(n<m)return gcd1(m,n,y,x);
+	if(n<m)return gcd1(m,n,x,y);
 	else return gcd1(n,m,y,x);
 }
 	
