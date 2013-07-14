@@ -34,14 +34,14 @@ int main(){
     priority_queue<int> temp;
     bool f=0,flg=0;
     for(i=10;i>0;i--){
-      cout<<i<<endl;
+   //   cout<<i<<endl;
       for(it=time[i].begin();it!=time[i].end();it++){
         if(f)printf(",");
         temp=it->second;
-        flg=0;
+        flg=f=0;
         while(!temp.empty()){
-          if(flg)printf("=");
           if(counts[temp.top()]==i){
+            if(flg)printf("=");
             printf("%d",temp.top());
             f=flg=1;
           }
@@ -50,7 +50,7 @@ int main(){
       }
     }
     flg=0;
-    for(i=10;i>0;i--){
+    for(i=T;i>0;i--){
       if(counts[i]==0){
         if(flg)putchar('=');
         printf("%d",i);
