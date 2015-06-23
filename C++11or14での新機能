@@ -1,0 +1,70 @@
+// C++11/14新機能メモ
+
+// コンパイルオプション
+// g++ -std=c++11
+
+//std::iota	いおた	連番で初期化
+std::iota(a, a+5, 1);  // a == {1,2,3,4,5}
+std::iota(a.begin(), a.end(), 1);  // a == {1,2,3,4,5}
+
+// 初期化リスト　統一的な初期化構文
+vector<int> v = {1,2,3};		//これで初期化できる
+map<string,int> m = {
+                {"foo",1},
+                {"bar",2},
+			};					//これで初期化できる
+
+// Range-based for
+vector<int> v = {1,2,3};
+for (auto x: v) {
+    cout << x << endl;
+}
+
+// ラムダ式を用いたfor_each　(λ式部分を関数に置き換えても可)
+int i_array[] = {1,2,3};
+for_each(std::begin(i_array), std::end(i_array),
+	[](int &i){
+		cout << i << endl;
+	}
+);
+
+// ラムダ式
+std::function< void(int) > f_lambda = [=](int i) { print_number(i); };
+auto f_lambda = [=](int i) { print_number(i); };
+[]{ std::cout<<"Hello World"<<std::endl;}();		//"Hello World"と表示。[]{}の間の()は省略されている。最後の()で実行されている。
+//戻り値
+auto a = [] { return 0;} (); // 戻り値を推測させる
+auto b = [] () -> float { return 3.14; } (); //明示的に戻り値を定義
+//変数のキャプチャ
+[&] { cout << x << endl; } (); //参照
+[=] { cout << x << endl; } (); //コピー
+
+// 山括弧
+vector<vector<int>> v;	//エラーにならない(>が「山閉じ括弧」の可能性を一番に探る。「>>」や「>=」や「>>=」の形の誤読がなくなった)
+
+// タプル	pairの3個以上要素がもてる版
+#include <tuple>
+std::tuple<int, int, int> tupleValue;	//int3つ分もてる。それぞれ型をわけることもできる
+int value1 = std::get<0>(tupleValue);	//pair.firstみたいなやつ。get<1>(),get<2>()でそれぞれとりだせる
+std::get<2>(tupleValue) = 10;	//代入
+auto tupleValue = std::make_tuple(10, 15.3, &instance);	//make_pairのタプル版
+auto tupleValue = std::tie(a, b, c);	//変数a,b,cの参照でタプルをつくる
+auto tuple3 = std::tuple_cat(tuple1, tuple2);	//タプルの連結
+//vectorに突っ込んでソートなどは、うまくいかない。pairは要素順に比較してくれるけど、tupleはそうではない。
+// http://d.hatena.ne.jp/nurs/20101030/1288412435
+
+// std::array
+#include <array>
+std::array<int, 3> intArray = {0, 1, 2};	//配列と同じように初期化できる。
+intArray[0] *= 2;		//普通の配列と同じ用に使える
+intArray.fill(10);	//すべての要素を初期化
+auto size = intArray.size();	//要素数取得
+for (int& v: intArray){　v *= 2;　}		//範囲ベースfor
+auto intArray2 = intArray;	// コピー
+std::swap(intArray, intArray2);		//入れ替え	
+if (intArray2 == intArray)	// 全要素同じかどうか比較する
+auto find = std::find(intArray.begin(), intArray.end(), 20); // イテレータ
+auto data = intArray.data();	//生配列の取得
+// front(), back(), begin(), end()がある。
+
+
