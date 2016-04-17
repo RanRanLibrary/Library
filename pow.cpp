@@ -9,7 +9,7 @@ long long _pow(int n,int m){    //n^m
     return tmp*tmp*(m%2?n:1);
 }
 
-long long pow(int n,int m,int q=1e9+7){    //n^m%q
+long long pow(int n,unsigned int m,int q=1e9+7){    //n^m%q
 	if(m==0) return 1;
 	long long tmp = pow(n,m/2,q);
 	return ((tmp*tmp)%q)*(m%2?n:1)%q;
