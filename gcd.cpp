@@ -5,8 +5,6 @@
 using namespace std;
 
 long long gcd(long long n,long long m){
-  if(n<m)swap(n,m);
-
   if(m==0)return n;
   return gcd(m,n%m);
 }
