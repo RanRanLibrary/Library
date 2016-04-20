@@ -1,57 +1,71 @@
 #include <iostream>
-#include <algorithm>
+#include <vector>
 
 using namespace std;
 
 typedef long long int ll;
 const ll MOD = 1e9+7;
 
-// n < 20000, r < 20000 の範囲まで
-ll memo[20005][20005]={};
-
-ll Cmb_(ll n, ll r){
-	if( memo[n][r] ) return memo[n][r];
-	if( r == 0 || r == n ) return 1;
-	return memo[n][r] = (Cmb_(n-1,r) + Cmb_(n-1,r-1)) % MOD;
+// n^m%MOD を求める。O( log(m) )
+ll modpow(ll n, int m){
+	ll ret=1;
+	for(int i=1; i<=m; i<<=1, (n*=n)%=MOD){
+		if( m&i ) (ret *= n) %= MOD;
+	}
+	return ret;
 }
 
-ll Cmb_2(int n, int r){
-	if( memo[n][r] ) return memo[n][r];
-	memo[0][0] = 1;
-	for(int i=0; i<n; i++){
-		for(int j=0; j<=i; j++){
-			(memo[i+1][j]   += memo[i][j]) %= MOD;
-			(memo[i+1][j+1] += memo[i][j]) %= MOD;
+// 逆元を求める
+ll modinv(ll n){
+	return modpow( n, MOD-2 );
+}
+
+// 階乗を求める。O(1)  準備O( n*log(n) )
+// fact[n]     : nの階乗
+// fact.inv[n] : nの階乗の逆元
+class FACTORIAL{
+public:
+	const int MAX_NUM = 1000006; // 最大のn
+	vector<ll> fact;
+	vector<ll> inv;
+	FACTORIAL(): fact(MAX_NUM), inv(MAX_NUM) {
+		fact[0] = 1;
+		for(ll i=1; i<MAX_NUM; i++){
+			fact[i] = (fact[i-1] * i) % MOD;
+			inv[i] = modpow( fact[i], MOD-2 );
 		}
 	}
-	return memo[n][r];
+	const ll& operator [ ] ( const int i ) const {
+		return fact[i];
+	}
+} fact;
+
+
+// 組み合わせ(Combinationを求める) O(1)
+ll cmb(unsigned int n, unsigned int r){
+	if( n < r ) return 0;
+	return fact[n] * fact.inv[r] % MOD * fact.inv[n-r] % MOD;
 }
 
-// 最速(1桁くらいしか速くならないけど)
-ll Cmb(int n, int r){
-	if( 2 * r > n ) r = n-r;
-	if( memo[n][r] ) return memo[n][n-r] = memo[n][r];
+
+// 実装が速い版 O(n^2) メモリ制限にも注意
+/*
+ll cmb_memo[10005][10005]={};
+ll Cmb_(int n, int r){
+	if( cmb_memo[n][r] ) return cmb_memo[n][r];
 	if( r == 0 || r == n ) return 1;
-	int nx = (n+1)/2;
-	ll sum=0, tmp;
-	for(int i = 0; i <= min(nx,r); i++){
-		tmp  = memo[n-nx][i] ? memo[n-nx][i] : Cmb(n-nx, i);
-		tmp *= memo[nx][r-i] ? memo[nx][r-i] : Cmb(nx, r-i);
-		sum += tmp % MOD;
-		sum %= MOD;
-	}
-	return memo[n][r] = sum;
+	return cmb_memo[n][r] = (Cmb_(n-1,r) + Cmb_(n-1,r-1)) % MOD;
 }
+*/
+
 
 int main(){
-	int n=20000, r=10000;
+	// 検証 abc034_c
+	int n, r;
 	while( std::cin >> n >> r, n|r ){
-		fill(memo[0], memo[20005], 0);
-		std::cout << "Cmb_ \t" << Cmb_(n,r) << std::endl;
-		fill(memo[0], memo[20005], 0);
-		std::cout << "Cmb_2\t" << Cmb_2(n,r) << std::endl;
-		fill(memo[0], memo[20005], 0);
-		std::cout << "Cmb  \t" << Cmb(n,r) << std::endl;
+		n--; r--;
+		std::cout << cmb(n+r, r) << std::endl;
+		return 0;
 	}
 	return 0;
 }
