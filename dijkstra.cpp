@@ -41,3 +41,14 @@ int main(void) {
 	
 	return 0;
 }
+
+
+// 構造体を使う場合
+struct ST{
+	int d, i, x, y;
+	// priority_queue用  constを忘れずに
+	bool operator< (const ST& a) const {
+		return (d > a.d);
+	}
+};
+
