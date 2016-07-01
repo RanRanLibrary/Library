@@ -25,10 +25,15 @@ class Flow{
 
 		// f->tにコストcの辺を追加する(同じf->tに対して何度も追加することも可能)
 		void addEdge(int f, int t, int c){
-			F[f][t] += c;
-			C[f][t] += c;
+			addCap(f, t, c);
 			edge[f].push_back(t);
 			edge[t].push_back(f);
+		}
+
+		// f->tの辺の容量をc増やす(cは非負)
+		void addCap(int f, int t, int c){
+			F[f][t] += c;
+			C[f][t] += c;
 		}
 
 		// 同じf->tペアに対してaddEdge()をたくさん実行した後に実行するとよい
@@ -107,6 +112,12 @@ class Flow_min{
 			edge[t].push_back(f);
 		}
 
+		// f->tの辺の容量をc増やす(オプション)
+		void addCap(int f, int t, int c){
+			F[f][t] += c;
+			C[f][t] += c;
+		}
+
 		// 増加パスをDFSで探す
 		int dfs(int n, int c, int T){
 			int f = c * (n==T);
@@ -124,7 +135,7 @@ class Flow_min{
 			while( bf.assign(N,0), dfs(S, INF, T) ){}
 		}
 
-		// 辺に流れている流量を取得する
+		// 辺に流れている流量を取得する(オプション)
 		int flow(int f, int t){ return C[f][t] - F[f][t]; }
 
 		// 隣接する辺の流量の合計を取得する。n=S,T以外の場合は、出た値を1/2倍したものがその点の流量
