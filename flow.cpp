@@ -7,21 +7,23 @@
 #define rep(i,n) for(int i=0; i<(n); i++)
 
 using namespace std;
-typedef pair<int,int> pii;
-typedef vector<int> vc;
+typedef vector<int> vi;
 
 const int INF = 0x3fffffff;
+
+// template, remove_edge, limit_flow の実装がない
+// 辺の容量を少なくする場合は、直接C[][]を操作してreset()を実行してください。
 
 // 最大流を求める(Dinic法)
 class Flow{
 	public:
 		int N;	// 頂点数
-		vector<vc> F, C, edge;	// F:残余グラフ C:初期容量 edge:隣接する頂点
-		vector<bool> bf;	// 調べ終わったかどうか
-		vector<int> lv;	// Sからの距離
+		vector<vi> F, C, edge;	// F:残余グラフ C:初期容量 edge:隣接する頂点
+
+		vi itr, lv;	// itr:調べ終わったかどうか  lv:Sからの距離
 
 		// コンストラクタ n:頂点数
-		Flow(int n): N(n), F(n,vc(n)), C(n,vc(n)), edge(n) {}
+		Flow(int n): N(n), F(n,vi(n)), C(n,vi(n)), edge(n) {}
 
 		// f->tにコストcの辺を追加する(同じf->tに対して何度も追加することも可能)
 		void addEdge(int f, int t, int c){
@@ -47,14 +49,14 @@ class Flow{
 		// sからの最短距離を求める。これを実行するとDFSでは最短経路の中から探索する
 		int bfs(int S, int T){
 			lv.assign(N, 0);
-			queue<int> que;
-			que.push(S);
+			queue<int> q;
+			q.push(S);
 			lv[S] = 1;
-			while( !que.empty() ){
-				int n = que.front(); que.pop();
+			while( !q.empty() ){
+				int n = q.front(); q.pop();
 				for(auto v: edge[n]) if( !lv[v] && F[n][v] ){
 					lv[v] = lv[n] + 1;
-					que.push(v);
+					q.push(v);
 				}
 			}
 			return lv[T];
@@ -63,21 +65,26 @@ class Flow{
 		// 増加パスをDFSで探す
 		int dfs(int n, int c, int T){
 			if( n == T ) return c;
-			bf[n] = true;
-			for(int v: edge[n]) if( F[n][v] && !bf[v] && lv[v] > lv[n] ){
-				int f = dfs(v, min(c, F[n][v]), T);
-				F[n][v] -= f;
-				F[v][n] += f;
-				if( f ) return f;
+			for(;itr[n] < edge[n].size(); ++itr[n]){
+				int v = edge[n][itr[n]];
+				if( F[n][v] && lv[v] > lv[n] ){
+					int f = dfs(v, min(c, F[n][v]), T);
+					F[n][v] -= f;
+					F[v][n] += f;
+					if(f) return f;
+				}
 			}
 			return 0;
 		}
 
-		// 最大流を求める
+		// 最大流を求める(現在の状態からいくら流れたかが返ってくる)
 		int maxFlow(int S, int T){
 			if( S == T ) return INF;
 			int ret = 0;
-			while( bfs(S,T) ) for(int add; bf.assign(N,0), add = dfs(S, INF, T);) ret += add;
+			while( bfs(S,T) ){
+				itr.assign(N,0);
+				for(int f; f=dfs(S, INF, T);) ret += f;
+			}
 			return ret;
 		}
 
@@ -99,11 +106,12 @@ class Flow{
 class Flow_min{
 	public:
 		int N;	// 頂点数
-		vector<vc> F, C, edge;	// F:残余グラフ C:初期容量 edge:隣接する頂点
-		vc bf;	// 調べ終わったかどうか
+		vector<vi> F, C, edge;	// F:残余グラフ C:初期容量 edge:隣接する頂点
+
+		vi used;	// 調べ終わったかどうか
 
 		// コンストラクタ n:頂点数
-		Flow_min(int n): N(n), F(n,vc(n)), C(n,vc(n)), edge(n) {}
+		Flow_min(int n): N(n), F(n,vi(n)), C(n,vi(n)), edge(n) {}
 
 		// f->tにコストcの辺を追加する(同じf->tに対して何度も追加することは不可)
 		void addEdge(int f, int t, int c){
@@ -121,8 +129,8 @@ class Flow_min{
 		// 増加パスをDFSで探す
 		int dfs(int n, int c, int T){
 			int f = c * (n==T);
-			bf[n] = 1;
-			for(int v: edge[n]) if( !f && F[n][v] && !bf[v] ){
+			used[n] = 1;
+			for(int v: edge[n]) if( !f && F[n][v] && !used[v] ){
 				f = dfs(v, min(c, F[n][v]), T);
 				F[n][v] -= f;
 				F[v][n] += f;
@@ -132,7 +140,9 @@ class Flow_min{
 
 		// 目一杯流す(S,Tは異なる点)
 		void maxFlow(int S, int T){
-			while( bf.assign(N,0), dfs(S, INF, T) ){}
+			// if(S==T) return INF;
+			while( used.assign(N,0), dfs(S, INF, T) ){}
+			// return flow(T);
 		}
 
 		// 辺に流れている流量を取得する(オプション)
@@ -145,9 +155,43 @@ class Flow_min{
 			return ret;
 		}
 
-		// グラフを初期値に戻す
+		// グラフを初期値に戻す(オプション)
 		void reset(){ rep(i,N) rep(j,N) F[i][j] = C[i][j]; }
 };
+
+// 最小構成
+/*
+class Flow_min{
+	public:
+		int N;	// 頂点数
+		vector<vi> F, C, e;	// F:残余グラフ C:初期容量 e:隣接する頂点
+		vi b;	// 調べ終わったかどうか
+		Flow_min(int n): N(n), F(n,vi(n)), C(n,vi(n)), e(n) {}
+		void addEdge(int f, int t, int c){
+			F[f][t] = C[f][t] = c;
+			e[f].push_back(t);
+			e[t].push_back(f);
+		}
+		int dfs(int n, int c, int T){
+			int f = c * (n==T);
+			b[n] = 1;
+			for(int v: e[n]) if( !f && F[n][v] && !b[v] ){
+				f = dfs(v, min(c, F[n][v]), T);
+				F[n][v] -= f;
+				F[v][n] += f;
+			}
+			return f;
+		}
+		void maxFlow(int S, int T){
+			while( b.assign(N,0), dfs(S, INF, T) ){}
+		}
+		int flow(int n){
+			int f=0;
+			for(int v: e[n]) f += abs( C[n][v] - F[n][v] );
+			return f;
+		}
+};
+*/
 
 int main(){
 	int V, E;
