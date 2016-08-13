@@ -25,21 +25,18 @@ ll modinv(ll n){
 // fact.inv[n] : nの階乗の逆元
 class FACTORIAL{
 public:
-	const int MAX_NUM = 1000006; // 最大のn
-	vector<ll> fact;
-	vector<ll> inv;
-	FACTORIAL(): fact(MAX_NUM), inv(MAX_NUM) {
-		fact[0] = 1;
-		inv[0] = 1;
+	vector<ll> fact, inv;
+	FACTORIAL(int MAX_NUM): fact(MAX_NUM), inv(MAX_NUM) {
+		fact[0] = inv[0] = 1;
 		for(ll i=1; i<MAX_NUM; i++){
 			fact[i] = (fact[i-1] * i) % MOD;
-			inv[i] = modpow( fact[i], MOD-2 );
+			inv[i] = modinv( fact[i] );
 		}
 	}
 	const ll& operator [ ] ( const int i ) const {
 		return fact[i];
 	}
-} fact;
+} fact(1000006); // nの最大値を指定
 
 
 // 組み合わせ(Combinationを求める) O(1)
