@@ -30,6 +30,7 @@ public:
 	vector<ll> inv;
 	FACTORIAL(): fact(MAX_NUM), inv(MAX_NUM) {
 		fact[0] = 1;
+		inv[0] = 1;
 		for(ll i=1; i<MAX_NUM; i++){
 			fact[i] = (fact[i-1] * i) % MOD;
 			inv[i] = modpow( fact[i], MOD-2 );
