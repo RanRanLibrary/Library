@@ -27,23 +27,9 @@ class Flow{
 
 		// f->tにコストcの辺を追加する(同じf->tに対して何度も追加することも可能)
 		void addEdge(int f, int t, int c){
-			addCap(f, t, c);
+			F[f][t] = C[f][t] = c;
 			edge[f].push_back(t);
 			edge[t].push_back(f);
-		}
-
-		// f->tの辺の容量をc増やす(cは非負)
-		void addCap(int f, int t, int c){
-			F[f][t] += c;
-			C[f][t] += c;
-		}
-
-		// 同じf->tペアに対してaddEdge()をたくさん実行した後に実行するとよい
-		void uniqueEdge(){
-			for(auto e: edge){
-				sort( e.begin(), e.end() );
-				e.erase( unique( e.begin(), e.end() ), e.end() );
-			}
 		}
 
 		// sからの最短距離を求める。これを実行するとDFSでは最短経路の中から探索する
@@ -77,7 +63,7 @@ class Flow{
 			return 0;
 		}
 
-		// 最大流を求める(現在の状態からいくら流れたかが返ってくる)
+		// 流す。最大流を求める(現在の状態からいくら流れたかが返ってくる)
 		int maxFlow(int S, int T){
 			if( S == T ) return INF;
 			int ret = 0;
