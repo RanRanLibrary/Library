@@ -14,26 +14,18 @@ struct node {
 		v = INIT;
 		lazy = 0;
 	}
-	// 葉ノードの更新
-	void update(T _v){
-		v = _v;
-	}
-	// ノードの更新
+	// ノードの値の更新
 	void merge(T vl, T vr){
 		v = min(vl, vr);
 	}
-	// ノードの値を取得
-	T get(){
-		return v;
-	}
-	// ノードの更新(lazy適用)
+	// ノードの値の更新(lazy適用)
 	T add(int l, int r, T _v=0){
 		T sum = lazy + _v;
 		v += sum;
 		lazy = 0;
 		return sum;
 	}
-	// ノードに遅延分をセット
+	// 遅延分の変更(加算)
 	void addLazy(T v){
 		lazy += v;
 	}
@@ -41,7 +33,7 @@ struct node {
 
 template <typename T, typename NODE=node<T,INF> >
 class SegTree{
-	// 遅延分の適応と伝播
+	// 遅延分の適応と伝播(現在のノードの値を確定させてLazyを伝搬させる)
 	void propLazy(int a, int b, int k, T v=0){
 		T lazy = data[k].add(a, b, v);
 		if( k < N ){
@@ -51,23 +43,23 @@ class SegTree{
 	}
 	// セグメントツリーをたどる
 	T prop(int l, int r, T v, int a, int b, int k=1){
-		// 伝播
+		// 今いるノードの値を確定させる
 		propLazy(a, b, k);
 		// たどる
 		NODE nd;	// 結果保存用(範囲外の場合は初期値が返る)
 		if( l <= a && b <= r ){
 			// 完全に範囲内の場合
 			propLazy(a, b, k, v);
-			return data[k].get();
+			return data[k].v;
 		}else if( l < b && a < r ){
 			// 中途半端に含まれる場合
 			int m = (a+b) / 2;
 			T vl = prop(l,r,v, a, m, k*2);
 			T vr = prop(l,r,v, m, b, k*2+1);
-			data[k].merge( data[k*2].get(), data[k*2+1].get() );
+			data[k].merge( data[k*2].v, data[k*2+1].v );
 			nd.merge( vl, vr );
 		}
-		return nd.get();
+		return nd.v;
 	}
 
 public:
@@ -79,7 +71,7 @@ public:
 		while( N < _N ) N<<=1;
 		data.resize(N*2);
 	}
-	// セグメントツリーの更新
+	// セグメントツリーの更新(指定した場所の値をvに変更)
 	void update(int l, T v){
 		prop(l, l+1, v-get(l), 0, N);
 	}
@@ -88,9 +80,12 @@ public:
 		return prop(l,r,v,0,N);
 	}
 	// 値を取得 [l,r)
-	T get(int l, int r=-1){
-		if( r == -1 ) r = l+1;
+	T get(int l, int r){
 		return prop(l,r,0,0,N);
+	}
+	// 値を取得 [l,l+1)
+	T get(int l){
+		return prop(l,l+1,0,0,N);
 	}
 };
 

@@ -18,36 +18,38 @@ const ll INF=10e12;
 
 template <typename T>
 class RMQ {
-	T query(int l, int r, int i, int b, int t){
-		if( l <= b && t <= r ){
-			return seg[i];
-		}else if( l < t && b < r ){
-			T u = query(l,r, i*2,   b, (t+b)/2 );
-			T v = query(l,r, i*2+1, (t+b)/2, t );
-			return min(u, v);
+	T query(int l, int r, int a, int b, int k){
+		if( l <= a && b <= r ){
+			return seg[k];
+		}else if( l < b && a < r ){
+			int m = (b+a)/2;
+			T vl = query(l,r, a, m, k*2);
+			T vr = query(l,r, m, b, k*2+1);
+			return min(vl, vr);	// merge
 		}
-		return INF;
+		return INF;	// default value
 	}
 public:
-	vector<T> seg;	// セグメントツリー (親:i/2  子:i*2,i*2+1)
-	int top=1;
+	vector<T> seg;	// セグメントツリー (親:k/2  子:k*2,k*2+1)
+	int N;
 	RMQ(int size){
-		while( top < size ) top<<=1;
-		seg.assign(top*2, INF);
+		N = 1;
+		while( N < size ) N<<=1;
+		seg.assign(N*2, INF);		// default value
 	}
-	void update(int pos, T val){
-		for(int i=top+pos; i>0; i>>=1){
-			seg[i] = val;
-			val = min(seg[i], seg[i^1]);
+	void update(int pos, T v){
+		for(int k=N+pos; k>0; k/=2){
+			seg[k] = v;
+			v = min(seg[k], seg[k^1]);	// merge
 		}
 	}
 	// [l,r)
 	T query(int l, int r){
 		if(l>r) swap(l,r);
-		return query(l, r, 1, 0, top);
+		return query(l, r, 0, N, 1);
 	}
 	T get(int pos){		// =query(pos, pos+1)
-		return seg[top+pos];
+		return seg[N+pos];
 	}
 };
 
