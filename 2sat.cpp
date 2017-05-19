@@ -34,15 +34,14 @@ struct SCCGraph: public vector<vi> {
 		vs.push_back(n);
 	}
 
-	// 強連結成分分解を行う
+	// 強連結成分分解を行う return:強連結成分の数
 	int scc(){
-		int N = size();
-		order.assign(N, -1);
-		vs.clear();
+		int N = size(), k = 0;
 		vector<vi> rG(N), tmp(N);   // 辺を逆にしたグラフ用
+		vs.clear();
+		order.assign(N, -1);
 		rep(n,N) if( order[n] < 0 ) dfs(n, n, (*this), rG);
 		order.assign(N, -1);
-		int k = 0;		// 強連結成分の番号
 		rrep(i,vs.size()) if( order[ vs[i] ] < 0 ) dfs(vs[i], k++, rG, tmp);
 		return k;
 	}
