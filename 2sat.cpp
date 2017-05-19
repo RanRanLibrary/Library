@@ -3,6 +3,7 @@
 #include <iostream>
 
 #define rep(i,n) for(int i=0; i<(n); i++)
+#define rrep(i,n) for(int i=(n)-1; i>=0; i--)
 
 using namespace std;
 
@@ -12,9 +13,8 @@ typedef vector<int> vi;
 // 強連結成分分解 (Strongly Connected Component)
 struct SCCGraph: public vector<vi> {
 
-	vector<int> order;    // 属する強連結成分の番号(トポロジカル順序になっている)
+	vector<int> order;    // 属する強連結成分の番号(トポロジカル順序になっている) まだ調べてない頂点は-1
 	vector<int> vs;       // 帰りがけ順
-	vector<bool> used;    // すでに調べたか
 
 	using vector::vector;	// 継承コンストラクタ
 	SCCGraph(const vector<vi> &v): vector::vector(v) {}	// コピーコンストラクタを使用可能にする
@@ -26,11 +26,10 @@ struct SCCGraph: public vector<vi> {
 
 	// scc()で使う
 	void dfs(int n, int k, vector<vi> &v, vector<vi> &rv){
-		used[n] = true;
 		order[n] = k;
 		for(auto t: v[n]){
 			rv[t].push_back(n);	// 逆辺のグラフを作成
-			if( !used[t] ) dfs(t, k, v, rv);
+			if( order[t] < 0 ) dfs(t, k, v, rv);
 		}
 		vs.push_back(n);
 	}
@@ -38,18 +37,13 @@ struct SCCGraph: public vector<vi> {
 	// 強連結成分分解を行う
 	int scc(){
 		int N = size();
-		used.assign(N, false);
-		order.resize(N);
+		order.assign(N, -1);
 		vs.clear();
 		vector<vi> rG(N), tmp(N);   // 辺を逆にしたグラフ用
-		for(int n=0; n < N; n++){
-			if( !used[n] ) dfs(n, n, (*this), rG);
-		}
-		used.assign(N, false);
+		rep(n,N) if( order[n] < 0 ) dfs(n, n, (*this), rG);
+		order.assign(N, -1);
 		int k = 0;		// 強連結成分の番号
-		for(int i = vs.size()-1; i >= 0; i--){
-			if( !used[ vs[i] ] ) dfs(vs[i], k++, rG, tmp);
-		}
+		rrep(i,vs.size()) if( order[ vs[i] ] < 0 ) dfs(vs[i], k++, rG, tmp);
 		return k;
 	}
 
@@ -77,10 +71,16 @@ struct TwoSAT {
 		N = n;
 	}
 
+	void clear(){
+		for(auto &&t: graph) t.clear();
+	}
+
 	// 辺( a -> b )を追加する。負の値は論理変数の否定(~a)を表す。
+	// また、a の否定として a+N も使える。
+	// a(>0) に対して、-a: 否定, a+N: 否定, -(a+N): 対偶=a
 	void add_edge(int a, int b){
-		if( a < 0 ) a = N - a;
-		if( b < 0 ) b = N - b;
+		if( a < 0 ) a = (3*N - a - 1) % (2*N) + 1;
+		if( b < 0 ) b = (3*N - b - 1) % (2*N) + 1;
 		graph.add_edge(a, b);
 	}
 

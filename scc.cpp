@@ -8,9 +8,8 @@ typedef vector<int> vi;
 // プログラミングコンテストチャレンジブック など参照
 struct SCCGraph: public vector<vi> {
 
-	vector<int> order;    // 属する強連結成分の番号(トポロジカル順序になっている)
-	vector<int> vs;   // 帰りがけ順
-	vector<bool> used;    // すでに調べたか
+	vector<int> order;    // 属する強連結成分の番号(トポロジカル順序になっている) まだ調べてない頂点は-1
+	vector<int> vs;       // 帰りがけ順
 
 	using vector::vector;	// 継承コンストラクタ
 	SCCGraph(const vector<vi> &v): vector::vector(v) {}	// コピーコンストラクタを使用可能にする
@@ -22,11 +21,10 @@ struct SCCGraph: public vector<vi> {
 
 	// scc()で使う
 	void dfs(int n, int k, vector<vi> &v, vector<vi> &rv){
-		used[n] = true;
 		order[n] = k;
 		for(auto t: v[n]){
-			if( !rv.empty() ) rv[t].push_back(n);	// 逆辺のグラフを作成
-			if( !used[t] ) dfs(t, k, v, rv);
+			rv[t].push_back(n);	// 逆辺のグラフを作成
+			if( order[t] < 0 ) dfs(t, k, v, rv);
 		}
 		vs.push_back(n);
 	}
@@ -34,17 +32,16 @@ struct SCCGraph: public vector<vi> {
 	// 強連結成分分解を行う
 	int scc(){
 		int N = size();
-		used.assign(N, false);
-		order.resize(N);
+		order.assign(N, -1);
 		vs.clear();
-		vector<vi> rG(N), tmp;   // 辺を逆にしたグラフ用
+		vector<vi> rG(N), tmp(N);   // 辺を逆にしたグラフ用
 		for(int n=0; n < N; n++){
-			if( !used[n] ) dfs(n, n, (*this), rG);
+			if( order[n] < 0 ) dfs(n, n, (*this), rG);
 		}
-		used.assign(N, false);
+		order.assign(N, -1);
 		int k = 0;		// 強連結成分の番号
 		for(int i = vs.size()-1; i >= 0; i--){
-			if( !used[ vs[i] ] ) dfs(vs[i], k++, rG, tmp);
+			if( order[ vs[i] ] < 0 ) dfs(vs[i], k++, rG, tmp);
 		}
 		return k;
 	}
