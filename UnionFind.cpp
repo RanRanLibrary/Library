@@ -1,5 +1,6 @@
 #include <vector>
 #include <map>
+#include <algorithm>
 
 // Spaghetti Source のUnionFind(まんま)
 // http://www.prefield.com/algorithm/container/union_find.html
@@ -13,17 +14,22 @@ struct UnionFind{
 
 	std::vector<int> data;
 	// dataの各要素について
-	// 負の値:その集合のルートであること示す(spaghetti sourceではその絶対値は集合の要素数となっている)
+	// 負の値:その集合のルートであること示す。また、その絶対値は集合の要素数となっている。
 	// 正の値:親ノードの番号(dataのインデックス)。root()を呼び出すたびに集合のルートを指すように書きなおされるので木はそんなに深くならない
 
 	//初期化 size:最大要素数
-	UnionFind(int size): data(size, -1){ }
+	UnionFind(int size): data(size, -1) {}
 	
 	// 集合を併合する
 	// すでに同じ集合だった場合は、falseが返る
 	bool unite(int x, int y){
-		x=root(x); y=root(y);
+		x=root(x);
+		y=root(y);
 		if( x != y ){
+			// 要素数の大きな方へ合併するためのswap
+			if( data[y] < data[x] ) std::swap(x, y);
+			// 要素数を加算する
+			data[x] += data[y];
 			// yの属する集合のルートをxに変更
 			data[y] = x;
 		}
@@ -41,7 +47,11 @@ struct UnionFind{
 		// 正の値は同じ集合に属するものを指す(辿ればいずれルートへ着く)
 		return (data[x] < 0)? x : data[x]=root(data[x]);
 	}
-	
+
+	// 集合の要素数を返す
+	int size(int x){
+		return -data[ root(x) ];
+	}
 };
 
 // 連番でない数字やint以外を扱う

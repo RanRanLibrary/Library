@@ -1,6 +1,3 @@
-// ARC026 C問題
-// この問題は、値の更新は小さくなる更新しかしない。大きくなる更新は未確認(おそらくできる)。
-
 #include <iostream>
 #include <set>
 #include <tuple>
@@ -44,14 +41,17 @@ public:
 		}
 	}
 	// [l,r)
-	T query(int l, int r){
-		if(l>r) swap(l,r);
+	T get(int l, int r){
 		return query(l, r, 0, N, 1);
 	}
-	T get(int pos){		// =query(pos, pos+1)
+	T get(int pos){		// =get(pos, pos+1)
 		return seg[N+pos];
 	}
 };
+
+
+// ARC026 C問題
+// この問題は、値の更新は小さくなる更新しかしない。大きくなる更新は未確認(おそらくできる)。
 
 typedef tuple<int,int,int> TP;
 int main(){
@@ -75,7 +75,7 @@ int main(){
 		int l = get<0>(t);
 		int r = get<1>(t);
 		int c = get<2>(t);
-		ll nex = rmq.query(l, r+1) + c;
+		ll nex = rmq.get(l, r+1) + c;
 		nex = min(nex, rmq.get(r));
 		rmq.update(r, nex);
 	}
