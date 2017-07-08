@@ -4,14 +4,15 @@
 using namespace std;
 typedef long long int ll;
 
-const int INF = 1e9+9;
+const int INF = 1e9;
+//const ll INF = 1e17;
 
 // 各ノードの情報
-template <typename T, T INIT>
+template <typename T>
 struct node {
 	T v, lazy;
 	node(){
-		v = INIT;
+		v = INF;
 		lazy = 0;
 	}
 	// ノードの値の更新
@@ -31,7 +32,7 @@ struct node {
 	}
 };
 
-template <typename T, typename NODE=node<T,INF> >
+template <typename T, typename NODE=node<T> >
 class SegTree{
 	// 遅延分の適応と伝播(現在のノードの値を確定させてLazyを伝搬させる)
 	void propLazy(int a, int b, int k, T v=0){
@@ -104,9 +105,9 @@ typedef pair<int,int> pii;
 
 // AOJ DSL_2_A
 /*
-const ll INF2 = ((ll)1<<31) - (ll)1;
-SegTree<ll,node<ll,INF2> > sg(100005);
+SegTree<ll,node<ll> > sg(100005);
 int main(){
+	rep(i,100005) sg.update(i,(1ll<<31)-1);
 	int n, q;
 	cin >> n >> q;
 	rep(i,q){
@@ -127,7 +128,7 @@ int main(){
 
 // arc026_C
 /*
-SegTree<ll,node<ll,(ll)1e12> > sg(100005);
+SegTree<ll,node<ll> > sg(100005);
 int main(){
 	int N, L;
 	int l[100005], r[100005], c[100005];
@@ -156,10 +157,10 @@ int main(){
 
 // 手動で確認
 /*
-SegTree<int,node<int,99> > sg(8);
+SegTree<int,node<int> > sg(8);
 int main(){
+	rep(i,8) sg.update(i,0);
 	int q, x, y, v;
-	sg.add(0,8,-99);
 	while(cin>>q>>x>>y){
 		if( q == 0 ){
 			cin >> v;
