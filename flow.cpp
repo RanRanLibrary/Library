@@ -7,7 +7,6 @@
 #define rep(i,n) for(int i=0; i<(n); i++)
 
 using namespace std;
-typedef vector<int> vi;
 
 const int INF = 0x3fffffff;
 
@@ -15,6 +14,7 @@ const int INF = 0x3fffffff;
 // 辺の容量を少なくする場合は、直接C[][]を操作してreset()を実行してください。
 
 // 最大流を求める(Dinic法)
+typedef vector<int> vi;
 class Flow{
 	public:
 		int N;	// 頂点数
@@ -66,10 +66,10 @@ class Flow{
 		// 流す。最大流を求める(現在の状態からいくら流れたかが返ってくる)
 		int maxFlow(int S, int T){
 			if( S == T ) return INF;
-			int ret = 0;
+			int f, ret = 0;
 			while( bfs(S,T) ){
 				itr.assign(N,0);
-				for(int f; f=dfs(S, INF, T);) ret += f;
+				while( f = dfs(S, INF, T) ) ret += f;
 			}
 			return ret;
 		}
@@ -179,6 +179,7 @@ class Flow_min{
 };
 */
 
+// AOJ GRL_6_A
 int main(){
 	int V, E;
 	cin >> V >> E;
